@@ -1,0 +1,51 @@
+/** @type {import('tailwindcss').Config} */
+export default {
+  content: ["./index.html", "./src/**/*.{js,jsx}"],
+  theme: {
+    extend: {
+      colors: {
+        primary: "#006d42",
+        "primary-container": "#00ab6b",
+        secondary: "#5d5e61",
+        "secondary-container": "#e2e2e5",
+        error: "#ba1a1a",
+        "on-primary": "#ffffff",
+        "on-secondary": "#ffffff",
+        "on-error": "#ffffff",
+        "on-surface": "#0b1c30",
+        "on-surface-variant": "#3d4a40",
+        background: "#f8f9ff",
+        "on-background": "#0b1c30",
+        surface: "#f8f9ff",
+        "surface-container": "#e5eeff",
+        "surface-container-low": "#eff4ff",
+        "surface-container-high": "#dce9ff",
+        "surface-container-highest": "#d3e4fe",
+        "surface-container-lowest": "#ffffff",
+        outline: "#8f918c",
+        "outline-variant": "#dfe3da",
+      },
+      spacing: {
+        xs: "8px",
+        sm: "16px",
+        md: "24px",
+        lg: "40px",
+        xl: "64px",
+        "margin-mobile": "16px",
+        "margin-desktop": "auto",
+      },
+      fontFamily: {
+        sans: ["Cairo", "system-ui", "sans-serif"],
+      },
+      fontSize: {
+        "headline-lg": ["32px", { lineHeight: "40px", fontWeight: "700" }],
+        "headline-md": ["24px", { lineHeight: "32px", fontWeight: "600" }],
+        "label-md": ["14px", { lineHeight: "20px", fontWeight: "600" }],
+        "label-sm": ["12px", { lineHeight: "16px", fontWeight: "500" }],
+        "body-md": ["16px", { lineHeight: "24px", fontWeight: "400" }],
+        "body-lg": ["18px", { lineHeight: "28px", fontWeight: "400" }],
+      },
+    },
+  },
+  plugins: [],
+};
