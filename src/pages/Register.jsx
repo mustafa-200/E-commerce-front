@@ -17,7 +17,7 @@ export default function Register() {
     }
     try {
       await register(form);
-      navigate("/account");
+      navigate("/");
     } catch (err) {
       setError("تعذر إنشاء الحساب. تأكد من صحة البيانات.");
     }

@@ -67,10 +67,12 @@ export async function removeCartItem(cartItemId) {
 }
 
 export async function mergeGuestCart() {
-  const { data } = await api.post(
-    "/cart/merge",
-    {},                     
-    { headers: guestHeaders() }   
-  );
+  const sessionId = localStorage.getItem(GUEST_SESSION_KEY);
+
+  // هنا عكس القاعدة العادية: لازم نبعت الـ Guest Session ID حتى لو
+  // فيه توكن، لأن الهدف من الطلب ده تحديدًا هو الربط بين الاتنين
+  const headers = sessionId ? { "X-Guest-Session-ID": sessionId } : {};
+
+  const { data } = await api.post("/cart/merge", {}, { headers });
   return data.data;
 }

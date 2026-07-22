@@ -43,7 +43,7 @@ function App() {
           <Route path="/search" element={<SearchResults />} />
           <Route path="/cart" element={<Cart />} />
           <Route path="/checkout" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />
-          <Route path="/order-confirmation" element={<OrderConfirmation />} />
+          <Route path="//order-confirmation" element={<OrderConfirmation />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/account" element={<ProtectedRoute><Account /></ProtectedRoute>} />

@@ -8,6 +8,7 @@ import { formatCurrency } from "../utils/currency";
 import Alert from "../components/ui/Alert";
 import Spinner from "../components/ui/Spinner";
 
+
 const emptyAddressForm = {
   full_name: "",
   phone: "",
@@ -42,6 +43,9 @@ export default function Checkout() {
 
   const [loadingAddresses, setLoadingAddresses] = useState(true);
 
+  const [orderPlaced, setOrderPlaced] = useState(false);
+
+
   /*
   |--------------------------------------------------------------------------
   | Redirect User If Not Authenticated
@@ -65,10 +69,11 @@ export default function Checkout() {
   */
 
   useEffect(() => {
+    if (orderPlaced) return; // لو الطلب اتنفذ خلاص، متعملش أي redirect تاني
     if (!cartLoading && items.length === 0) {
       navigate("/cart");
     }
-  }, [cartLoading, items.length, navigate]);
+  }, [cartLoading, items.length, navigate, orderPlaced]);
 
   /*
   |--------------------------------------------------------------------------
@@ -178,7 +183,6 @@ export default function Checkout() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     setError("");
 
     if (!selectedAddressId) {
@@ -194,19 +198,9 @@ export default function Checkout() {
         address_id: selectedAddressId,
       });
 
-      /*
-      |--------------------------------------------------------------------------
-      | Refresh Backend Cart
-      |--------------------------------------------------------------------------
-      */
+      setOrderPlaced(true); // 👈 نمنع الـ redirect القديم من التدخل من هنا
 
       await refreshCart();
-
-      /*
-      |--------------------------------------------------------------------------
-      | Go To Order Confirmation
-      |--------------------------------------------------------------------------
-      */
 
       navigate("/order-confirmation", {
         state: {
@@ -222,7 +216,6 @@ export default function Checkout() {
       setSubmitting(false);
     }
   };
-
   return (
     <div
       dir="rtl"
