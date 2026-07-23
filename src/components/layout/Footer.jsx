@@ -25,11 +25,10 @@ export default function Footer() {
             <div className="text-right">
               <h4 className="text-sm font-bold text-gray-900 mb-6">روابط سريعة</h4>
               <div className="flex flex-col gap-4">
-                <a className="text-xs text-gray-600 hover:text-teal-600 transition-all" href="#">من نحن</a>
-                <a className="text-xs text-gray-600 hover:text-teal-600 transition-all" href="#">تواصل معنا</a>
-                <a className="text-xs text-gray-600 hover:text-teal-600 transition-all" href="#">سياسة الشحن</a>
-                <a className="text-xs text-gray-600 hover:text-teal-600 transition-all" href="#">الخصوصية</a>
-                <a className="text-xs text-gray-600 hover:text-teal-600 transition-all" href="#">الشروط والأحكام</a>
+                <Link className="text-xs text-gray-600 hover:text-teal-600 transition-all" to="/about-us">من نحن</Link>
+                <Link className="text-xs text-gray-600 hover:text-teal-600 transition-all" to="/contact-us">تواصل معنا</Link>
+                <Link className="text-xs text-gray-600 hover:text-teal-600 transition-all" to="/shipping-policy">سياسة الشحن</Link>
+
               </div>
             </div>
 

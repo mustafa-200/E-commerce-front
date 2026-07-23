@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import CategoryCard from "../ui/CategoryCard";
 import Spinner from "../ui/Spinner";
-import { fetchCategories } from "../../api/categories";
+import { useCategories } from "../../context/CategoryContext";
 
 // شكل العرض (كام عمود/صف يشغل كل قسم) بيتحدد حسب ترتيبه، مش بيانات ثابتة عن القسم نفسه
 const LAYOUT = [
@@ -12,12 +12,8 @@ const LAYOUT = [
 ];
 
 export default function CategorySection() {
-  const [categories, setCategories] = useState([]);
-  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    fetchCategories().then((data) => { setCategories(data); setLoading(false); });
-  }, []);
+  const { categories, loading } = useCategories();
 
   return (
     <section className="px-margin-mobile md:px-lg py-xl">

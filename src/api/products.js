@@ -1,57 +1,38 @@
 import api from "./axios";
-import { PRODUCTS, getProductById, getProductsByCategorySlug } from "../data/mockData";
 
 // -------- Storefront (Public) --------
 export async function fetchLatestProducts(limit = 8) {
-  try {
-    const { data } = await api.get(`/products`, { params: { featured: true, limit } });
-    return data.data ?? data;
-  } catch (err) {
-    return PRODUCTS.slice(0, limit);
-  }
+  const { data } = await api.get(`/products`, { params: { featured: true, limit } });
+  return data.data ?? [];
 }
 
 export async function fetchProductsByCategory(categoryId, sort = null) {
-  try {
-    const { data } = await api.get(`/products`, { params: { category_id: categoryId, sort } });
-    return data.data ?? data;
-  } catch (err) {
-    return getProductsByCategorySlug(categoryId);
-  }
+  const { data } = await api.get(`/products`, { params: { category_id: categoryId, sort } });
+  return data.data ?? [];
 }
 
 export async function fetchProduct(slug) {
-  try {
-    const { data } = await api.get(`/products/${slug}`);
-    return data.data ?? data;
-  } catch (err) {
-    return getProductById(slug) ?? null;
-  }
+  const { data } = await api.get(`/products/${slug}`);
+  return data.data ?? null;
 }
 
 export async function searchProducts(query) {
-  try {
-    const { data } = await api.get(`/products`, { params: { search: query } });
-    return data.data ?? data;
-  } catch (err) {
-    const q = query.trim().toLowerCase();
-    return PRODUCTS.filter((p) => p.title.toLowerCase().includes(q));
-  }
+  const { data } = await api.get(`/products`, { params: { search: query } });
+  return data.data ?? [];
 }
 
-// -------- Admin: Product (بيانات أساسية فقط — من غير سعر/مخزون/صور) --------
+// -------- Admin: Product --------
 export async function adminListProducts() {
   const { data } = await api.get(`/admin/products`);
-  return data.data ?? data;
+  return data.data ?? [];
 }
 
 export async function adminGetProduct(id) {
   const { data } = await api.get(`/admin/products/${id}`);
-  return data.data ?? data;
+  return data.data ?? null;
 }
 
 export async function adminCreateProduct(product) {
-  // JSON عادي — الـ Product نفسه مفيهوش أي ملف
   const { data } = await api.post(`/admin/products`, product);
   return data.data ?? data;
 }
@@ -71,7 +52,7 @@ export async function adminToggleFeatured(id) {
   return data;
 }
 
-// -------- Admin: Variants (السعر/المخزون/SKU/الألوان والمقاسات) --------
+// -------- Admin: Variants --------
 export async function adminCreateVariant(productId, variant) {
   const { data } = await api.post(`/admin/products/${productId}/variants`, variant);
   return data.data ?? data;

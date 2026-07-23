@@ -24,6 +24,10 @@ import DashboardCategories from "./pages/dashboard/DashboardCategories";
 import DashboardOrders from "./pages/dashboard/DashboardOrders";
 import DashboardSliders from "./pages/dashboard/DashboardSliders";
 
+import AboutUs from "./pages/AboutUs";
+import ContactUs from "./pages/ContactUs";
+import ShippingPolicy from "./pages/ShippingPolicy";
+
 import { ProtectedRoute, AdminRoute } from "./components/common/ProtectedRoute";
 
 import "./index.css";

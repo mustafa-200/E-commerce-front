@@ -1,28 +1,28 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react"; 
 import { Link, useNavigate, NavLink } from "react-router-dom";
 import { useCart } from "../../context/CartContext";
 import { useAuth } from "../../context/AuthContext";
-import { fetchCategories } from "../../api/categories";
+import { useCategories } from "../../context/CategoryContext";
+
 
 export default function Navbar() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [query, setQuery] = useState("");
-  const [categories, setCategories] = useState([]);
+
+  const { categories } = useCategories();
   const { count } = useCart();
   const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    fetchCategories().then((cats) => {
-      // نعرض بس التصنيفات الرئيسية (parent_id = null) في الـ Navbar
-      setCategories(cats.filter((c) => c.is_active && !c.parent_id));
-    });
-  }, []);
-
   const navLinks = [
     { to: "/", label: "الرئيسية", end: true },
-    ...categories.map((c) => ({ to: `/category/${c.slug}`, label: c.name })),
+    ...categories
+      .filter((c) => c.is_active && !c.parent_id)
+      .map((c) => ({
+        to: `/category/${c.slug}`,
+        label: c.name,
+      })),
   ];
 
   const handleSearch = (e) => {
