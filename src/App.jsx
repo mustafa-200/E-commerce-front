@@ -15,6 +15,10 @@ import OrderConfirmation from "./pages/OrderConfirmation";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Account from "./pages/Account";
+import AboutUs from "./pages/AboutUs";
+import ContactUs from "./pages/ContactUs";
+import ShippingPolicy from "./pages/ShippingPolicy";
+
 import NotFound from "./pages/NotFound";
 
 import DashboardLayout from "./pages/dashboard/DashboardLayout";
@@ -23,10 +27,6 @@ import DashboardProducts from "./pages/dashboard/DashboardProducts";
 import DashboardCategories from "./pages/dashboard/DashboardCategories";
 import DashboardOrders from "./pages/dashboard/DashboardOrders";
 import DashboardSliders from "./pages/dashboard/DashboardSliders";
-
-import AboutUs from "./pages/AboutUs";
-import ContactUs from "./pages/ContactUs";
-import ShippingPolicy from "./pages/ShippingPolicy";
 
 import { ProtectedRoute, AdminRoute } from "./components/common/ProtectedRoute";
 
@@ -47,10 +47,14 @@ function App() {
           <Route path="/search" element={<SearchResults />} />
           <Route path="/cart" element={<Cart />} />
           <Route path="/checkout" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />
-          <Route path="//order-confirmation" element={<OrderConfirmation />} />
+          <Route path="/order-confirmation" element={<OrderConfirmation />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/account" element={<ProtectedRoute><Account /></ProtectedRoute>} />
+          <Route path="/about-us" element={<AboutUs />} />
+          <Route path="/contact-us" element={<ContactUs />} />
+          <Route path="/shipping-policy" element={<ShippingPolicy />} />
+          
 
           <Route path="/dashboard" element={<AdminRoute><DashboardLayout /></AdminRoute>}>
             <Route index element={<DashboardHome />} />

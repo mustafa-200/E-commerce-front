@@ -72,9 +72,9 @@ export async function adminAddProductImage(productId, file, isPrimary = false) {
   const formData = new FormData();
   formData.append("image", file);
   if (isPrimary) formData.append("is_primary", "1");
-  const { data } = await api.post(`/admin/products/${productId}/images`, formData, {
-    headers: { "Content-Type": undefined },
-  });
+  
+  const { data } = await api.post(`/admin/products/${productId}/images`, formData);
+  
   return data.data ?? data;
 }
 

@@ -15,9 +15,10 @@ export default function Footer() {
             <div className="mb-6">
               <img src="/ph1.png" alt="Fakher" className="h-16 w-auto object-contain" />
             </div>
-            <p className="text-sm text-gray-600 max-w-sm leading-6">
-              متجر متخصص في الملابس والإكسسوارات الفاخرة. نقدم أفضل المنتجات العربية والعالمية بجودة عالية وأسعار منافسة.
-            </p>
+            <p className="text-sm text-gray-600 max-w-sm leading-6">**اكتشف عالمًا من الجودة والتميز**
+
+متجرنا وجهتك للتسوق المتنوع، حيث نقدم تشكيلة واسعة من المنتجات المميزة التي تم اختيارها بعناية لتجمع بين الجودة، التصميم العصري، والقيمة العالية. نسعى لتوفير تجربة شراء متكاملة تجمع بين سهولة التسوق، تنوع الاختيارات، وخدمة ترضي تطلعات عملائنا.
+</p>
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-12 md:gap-16 flex-[2] w-full">
@@ -28,7 +29,7 @@ export default function Footer() {
                 <Link className="text-xs text-gray-600 hover:text-teal-600 transition-all" to="/about-us">من نحن</Link>
                 <Link className="text-xs text-gray-600 hover:text-teal-600 transition-all" to="/contact-us">تواصل معنا</Link>
                 <Link className="text-xs text-gray-600 hover:text-teal-600 transition-all" to="/shipping-policy">سياسة الشحن</Link>
-
+                
               </div>
             </div>
 
@@ -60,8 +61,9 @@ export default function Footer() {
               <div className="text-right">
                 <h4 className="text-xs font-bold text-gray-900 mb-3">تواصل معنا</h4>
                 <div className="flex flex-col gap-2">
-                  <a href="tel:+201001234567" className="text-xs text-gray-600 hover:text-teal-600 transition">📞 01001234567+‏ 20</a>
-                  <a href="mailto:info@fakher.com" className="text-xs text-gray-600 hover:text-teal-600 transition">✉️ info@fakher.com</a>
+                  <a href="tel:+201037419260" className="text-xs text-gray-600 hover:text-teal-600 transition">📞 +201037419260</a>
+                  <a href="https://wa.me/201037419260?text=مرحباً" target="_blank" rel="noopener noreferrer" className="text-xs text-gray-600 hover:text-teal-600 transition">💬 واتساب</a>
+                  <a href="mailto:ahmedhany234567op@gmail.com" className="text-xs text-gray-600 hover:text-teal-600 transition">✉️ ahmedhany234567op@gmail.com</a>
                 </div>
               </div>
             </div>
