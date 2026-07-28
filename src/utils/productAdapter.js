@@ -12,6 +12,7 @@ export function adaptProduct(product) {
     slug: product.slug,
     title: product.name,
     category: product.category?.name || "",
+    categorySlug: product.category?.slug || "",
     image: primaryImage?.image || null,
     price: mainVariant.sale_price ?? mainVariant.price ?? 0,
     oldPrice: mainVariant.sale_price ? mainVariant.price : null,

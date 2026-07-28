@@ -8,7 +8,7 @@ import Spinner from "../components/ui/Spinner";
 import { formatCurrency } from "../utils/currency";
 import { adaptProduct, adaptProductDetail } from "../utils/productAdapter";
 
-const STORE_WHATSAPP = "201001234567";
+const STORE_WHATSAPP = "201037419260";
 
 export default function ProductDetail() {
   const { id: slug } = useParams();
@@ -143,7 +143,9 @@ export default function ProductDetail() {
           الرئيسية
         </Link>
         <span className="material-symbols-outlined text-[14px]">chevron_left</span>
-        <span className="hover:text-primary">{product.category}</span>
+        <Link to={`/category/${product.categorySlug}`} className="hover:text-primary">
+          {product.category}
+        </Link>
         <span className="material-symbols-outlined text-[14px]">chevron_left</span>
         <span className="text-primary font-bold">{product.title}</span>
       </nav>
@@ -416,4 +418,4 @@ export default function ProductDetail() {
       )}
     </div>
   );
-} 
+}
