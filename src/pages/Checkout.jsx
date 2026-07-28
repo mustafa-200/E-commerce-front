@@ -17,6 +17,51 @@ const emptyAddressForm = {
   street: "",
 };
 
+const EGYPT_PHONE_REGEX = /^01[0125][0-9]{8}$/;
+
+function validateAddressForm(form) {
+  const errors = {};
+
+  const fullName = form.full_name.trim();
+  if (!fullName) {
+    errors.full_name = "الاسم الكامل مطلوب.";
+  } else if (fullName.length < 3) {
+    errors.full_name = "الاسم لازم يكون 3 أحرف على الأقل.";
+  } else if (fullName.length > 60) {
+    errors.full_name = "الاسم طويل جداً.";
+  }
+
+  const phone = form.phone.trim();
+  if (!phone) {
+    errors.phone = "رقم الهاتف مطلوب.";
+  } else if (!EGYPT_PHONE_REGEX.test(phone)) {
+    errors.phone = "رقم الهاتف غير صحيح، لازم يبدأ بـ 01 ويتكون من 11 رقم.";
+  }
+
+  const city = form.city.trim();
+  if (!city) {
+    errors.city = "المدينة مطلوبة.";
+  } else if (city.length < 2) {
+    errors.city = "اسم المدينة قصير جداً.";
+  }
+
+  const area = form.area.trim();
+  if (!area) {
+    errors.area = "المنطقة مطلوبة.";
+  } else if (area.length < 2) {
+    errors.area = "اسم المنطقة قصير جداً.";
+  }
+
+  const street = form.street.trim();
+  if (!street) {
+    errors.street = "الشارع والعنوان بالتفصيل مطلوب.";
+  } else if (street.length < 5) {
+    errors.street = "من فضلك اكتب عنوان أكثر تفصيلاً (5 أحرف على الأقل).";
+  }
+
+  return errors;
+}
+
 export default function Checkout() {
   const {
     items,
@@ -34,10 +79,12 @@ export default function Checkout() {
   const [showNewAddressForm, setShowNewAddressForm] = useState(false);
 
   const [addressForm, setAddressForm] = useState(emptyAddressForm);
+  const [addressFormErrors, setAddressFormErrors] = useState({});
 
   const [paymentMethod, setPaymentMethod] = useState("cod");
 
   const [submitting, setSubmitting] = useState(false);
+  const [savingAddress, setSavingAddress] = useState(false);
 
   const [error, setError] = useState("");
 
@@ -141,6 +188,14 @@ export default function Checkout() {
       ...prev,
       [name]: value,
     }));
+
+    // امسح رسالة الخطأ بتاعة الحقل ده أول ما اليوزر يبدأ يعدله
+    setAddressFormErrors((prev) => {
+      if (!prev[name]) return prev;
+      const next = { ...prev };
+      delete next[name];
+      return next;
+    });
   };
 
   /*
@@ -154,8 +209,24 @@ export default function Checkout() {
 
     setError("");
 
+    const validationErrors = validateAddressForm(addressForm);
+
+    if (Object.keys(validationErrors).length > 0) {
+      setAddressFormErrors(validationErrors);
+      return;
+    }
+
+    setAddressFormErrors({});
+    setSavingAddress(true);
+
     try {
-      const newAddress = await createAddress(addressForm);
+      const newAddress = await createAddress({
+        full_name: addressForm.full_name.trim(),
+        phone: addressForm.phone.trim(),
+        city: addressForm.city.trim(),
+        area: addressForm.area.trim(),
+        street: addressForm.street.trim(),
+      });
 
       setAddresses((prev) => [
         ...prev,
@@ -167,11 +238,14 @@ export default function Checkout() {
       setShowNewAddressForm(false);
 
       setAddressForm(emptyAddressForm);
+      setAddressFormErrors({});
     } catch (err) {
       setError(
         err?.response?.data?.message ||
         "تعذر حفظ العنوان."
       );
+    } finally {
+      setSavingAddress(false);
     }
   };
 
@@ -333,6 +407,7 @@ export default function Checkout() {
             {showNewAddressForm && (
               <form
                 onSubmit={handleSaveNewAddress}
+                noValidate
                 className="bg-gray-50 p-5 rounded-xl border border-gray-200 flex flex-col gap-4"
               >
                 <h3 className="font-bold text-gray-800">
@@ -345,13 +420,23 @@ export default function Checkout() {
                   </label>
 
                   <input
-                    required
                     name="full_name"
                     value={addressForm.full_name}
                     onChange={handleAddressFormChange}
                     placeholder="مثال: خالد جمال"
-                    className="w-full border border-gray-300 rounded-lg px-4 py-3 text-right outline-none focus:ring-2 focus:ring-teal-500"
+                    aria-invalid={!!addressFormErrors.full_name}
+                    className={`w-full border rounded-lg px-4 py-3 text-right outline-none focus:ring-2 ${
+                      addressFormErrors.full_name
+                        ? "border-red-400 focus:ring-red-400"
+                        : "border-gray-300 focus:ring-teal-500"
+                    }`}
                   />
+
+                  {addressFormErrors.full_name && (
+                    <p className="text-red-600 text-xs mt-1">
+                      {addressFormErrors.full_name}
+                    </p>
+                  )}
                 </div>
 
                 <div>
@@ -360,13 +445,25 @@ export default function Checkout() {
                   </label>
 
                   <input
-                    required
                     name="phone"
                     value={addressForm.phone}
                     onChange={handleAddressFormChange}
                     placeholder="01xxxxxxxxx"
-                    className="w-full border border-gray-300 rounded-lg px-4 py-3 text-right outline-none focus:ring-2 focus:ring-teal-500"
+                    inputMode="numeric"
+                    maxLength={11}
+                    aria-invalid={!!addressFormErrors.phone}
+                    className={`w-full border rounded-lg px-4 py-3 text-right outline-none focus:ring-2 ${
+                      addressFormErrors.phone
+                        ? "border-red-400 focus:ring-red-400"
+                        : "border-gray-300 focus:ring-teal-500"
+                    }`}
                   />
+
+                  {addressFormErrors.phone && (
+                    <p className="text-red-600 text-xs mt-1">
+                      {addressFormErrors.phone}
+                    </p>
+                  )}
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -376,13 +473,23 @@ export default function Checkout() {
                     </label>
 
                     <input
-                      required
                       name="city"
                       value={addressForm.city}
                       onChange={handleAddressFormChange}
                       placeholder="المدينة"
-                      className="w-full border border-gray-300 rounded-lg px-4 py-3 text-right outline-none focus:ring-2 focus:ring-teal-500"
+                      aria-invalid={!!addressFormErrors.city}
+                      className={`w-full border rounded-lg px-4 py-3 text-right outline-none focus:ring-2 ${
+                        addressFormErrors.city
+                          ? "border-red-400 focus:ring-red-400"
+                          : "border-gray-300 focus:ring-teal-500"
+                      }`}
                     />
+
+                    {addressFormErrors.city && (
+                      <p className="text-red-600 text-xs mt-1">
+                        {addressFormErrors.city}
+                      </p>
+                    )}
                   </div>
 
                   <div>
@@ -391,13 +498,23 @@ export default function Checkout() {
                     </label>
 
                     <input
-                      required
                       name="area"
                       value={addressForm.area}
                       onChange={handleAddressFormChange}
                       placeholder="المنطقة"
-                      className="w-full border border-gray-300 rounded-lg px-4 py-3 text-right outline-none focus:ring-2 focus:ring-teal-500"
+                      aria-invalid={!!addressFormErrors.area}
+                      className={`w-full border rounded-lg px-4 py-3 text-right outline-none focus:ring-2 ${
+                        addressFormErrors.area
+                          ? "border-red-400 focus:ring-red-400"
+                          : "border-gray-300 focus:ring-teal-500"
+                      }`}
                     />
+
+                    {addressFormErrors.area && (
+                      <p className="text-red-600 text-xs mt-1">
+                        {addressFormErrors.area}
+                      </p>
+                    )}
                   </div>
                 </div>
 
@@ -407,21 +524,32 @@ export default function Checkout() {
                   </label>
 
                   <input
-                    required
                     name="street"
                     value={addressForm.street}
                     onChange={handleAddressFormChange}
                     placeholder="اسم الشارع ورقم المنزل"
-                    className="w-full border border-gray-300 rounded-lg px-4 py-3 text-right outline-none focus:ring-2 focus:ring-teal-500"
+                    aria-invalid={!!addressFormErrors.street}
+                    className={`w-full border rounded-lg px-4 py-3 text-right outline-none focus:ring-2 ${
+                      addressFormErrors.street
+                        ? "border-red-400 focus:ring-red-400"
+                        : "border-gray-300 focus:ring-teal-500"
+                    }`}
                   />
+
+                  {addressFormErrors.street && (
+                    <p className="text-red-600 text-xs mt-1">
+                      {addressFormErrors.street}
+                    </p>
+                  )}
                 </div>
 
                 <div className="flex gap-3">
                   <button
                     type="submit"
-                    className="bg-teal-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-teal-700 transition-all"
+                    disabled={savingAddress}
+                    className="bg-teal-600 disabled:bg-gray-300 disabled:cursor-not-allowed text-white px-6 py-3 rounded-lg font-semibold hover:bg-teal-700 transition-all"
                   >
-                    حفظ العنوان
+                    {savingAddress ? "جاري الحفظ..." : "حفظ العنوان"}
                   </button>
 
                   {addresses.length > 0 && (
@@ -430,6 +558,7 @@ export default function Checkout() {
                       onClick={() => {
                         setShowNewAddressForm(false);
                         setAddressForm(emptyAddressForm);
+                        setAddressFormErrors({});
                       }}
                       className="border border-gray-300 px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-all"
                     >
@@ -612,5 +741,3 @@ export default function Checkout() {
     </div>
   );
 }
-
-
