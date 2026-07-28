@@ -1,8 +1,17 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { useCategories } from "../../context/CategoryContext";
 
 export default function Footer() {
   const year = new Date().getFullYear();
+  const { categories } = useCategories();
+
+  const footerCategoryLinks = categories
+    .filter((c) => c.is_active && !c.parent_id)
+    .map((c) => ({
+      to: `/category/${c.slug}`,
+      label: c.name,
+    }));
 
   return (
     <footer className="bg-gradient-to-b from-white to-gray-50 w-full py-16 mt-20 pb-32 md:pb-16 border-t border-gray-200">
@@ -36,10 +45,15 @@ export default function Footer() {
             <div className="text-right">
               <h4 className="text-sm font-bold text-gray-900 mb-6">الأقسام</h4>
               <div className="flex flex-col gap-4">
-                <Link className="text-xs text-gray-600 hover:text-teal-600 transition-all" to="/category/clothing">ملابس</Link>
-                <Link className="text-xs text-gray-600 hover:text-teal-600 transition-all" to="/category/shoes">أحذية</Link>
-                <Link className="text-xs text-gray-600 hover:text-teal-600 transition-all" to="/category/accessories">إكسسوارات</Link>
-                <Link className="text-xs text-gray-600 hover:text-teal-600 transition-all" to="/category/food">أطعمة</Link>
+                {footerCategoryLinks.map((link) => (
+                  <Link
+                    key={link.to}
+                    className="text-xs text-gray-600 hover:text-teal-600 transition-all"
+                    to={link.to}
+                  >
+                    {link.label}
+                  </Link>
+                ))}
                 <Link className="text-xs text-gray-600 hover:text-teal-600 transition-all" to="/latest-products">أحدث المنتجات</Link>
               </div>
             </div>
