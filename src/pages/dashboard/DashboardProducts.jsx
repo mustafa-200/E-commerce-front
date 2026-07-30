@@ -288,7 +288,9 @@ export default function DashboardProducts() {
 
             {form.variants.map((v) => (
               <div key={v.tempId} className="grid grid-cols-2 sm:grid-cols-6 gap-2 mb-2 items-center bg-white p-2 rounded-lg border border-gray-200">
-                {attributes.map((attr) => (
+                {attributes
+                  .filter((attr) => !attr.category_id || String(attr.category_id) === String(form.category_id))
+                  .map((attr) => (
                   <select
                     key={attr.id}
                     value={v.attributeSelections[attr.id] || ""}
