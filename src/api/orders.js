@@ -29,3 +29,10 @@ export async function adminFetchStats() {
   const { data } = await api.get(`/admin/stats`);
   return data.data ?? data;
 }
+
+export async function adminUpdateShippingCost(orderId, shippingCost) {
+  const response = await api.patch(`/admin/orders/${orderId}/shipping-cost`, {
+    shipping_cost: shippingCost,
+  });
+  return response.data.data;
+}

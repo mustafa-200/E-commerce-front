@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { adminListOrders, adminUpdateOrderStatus } from "../../api/orders";
+import { adminListOrders, adminUpdateOrderStatus, adminUpdateShippingCost } from "../../api/orders";
 import Spinner from "../../components/ui/Spinner";
 import EmptyState from "../../components/ui/EmptyState";
 import Alert from "../../components/ui/Alert";
@@ -27,8 +27,6 @@ const STATUS_STYLES = {
   cancelled: "bg-red-50 text-red-600",
 };
 
-// نفس منطق الانتقالات الموجود في OrderService::TRANSITIONS بالباك اند
-// لازم يفضلوا متطابقين دايمًا؛ لو الباك اند اتغير، حدّث هنا كمان
 const TRANSITIONS = {
   pending: ["confirmed", "cancelled"],
   confirmed: ["preparing", "cancelled"],
@@ -39,7 +37,75 @@ const TRANSITIONS = {
   cancelled: [],
 };
 
-function OrderRow({ order, onStatusChange, updating }) {
+const SHIPPING_LOCKED_STATUSES = ["delivered", "cancelled"];
+
+function ShippingCostInline({ order, onShippingUpdated }) {
+  const [value, setValue] = useState(order.shipping_cost ?? "");
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState(null);
+
+  const isLocked = SHIPPING_LOCKED_STATUSES.includes(order.order_status);
+
+  useEffect(() => {
+    setValue(order.shipping_cost ?? "");
+  }, [order.shipping_cost]);
+
+  const handleBlurOrSave = async () => {
+    setError(null);
+    const numericValue = Number(value);
+
+    if (numericValue === Number(order.shipping_cost ?? 0)) return;
+
+    if (value === "" || isNaN(numericValue) || numericValue < 0) {
+      setError("قيمة غير صحيحة");
+      setValue(order.shipping_cost ?? "");
+      return;
+    }
+
+    setSaving(true);
+    try {
+      const updatedOrder = await adminUpdateShippingCost(order.id, numericValue);
+      onShippingUpdated(updatedOrder);
+    } catch (err) {
+      setError(err?.response?.data?.message || "تعذر تحديث سعر الشحن");
+      setValue(order.shipping_cost ?? "");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  if (isLocked) {
+    return (
+      <div className="text-xs text-gray-500 text-center">
+        <p className="mb-0.5">الشحن</p>
+        <p className="font-semibold text-gray-700">{formatCurrency(order.shipping_cost)}</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex flex-col items-center gap-0.5">
+      <span className="text-[11px] text-gray-500">الشحن</span>
+      <div className="flex items-center gap-1">
+        <input
+          type="number"
+          min="0"
+          step="0.01"
+          value={value}
+          disabled={saving}
+          onChange={(e) => setValue(e.target.value)}
+          onBlur={handleBlurOrSave}
+          onKeyDown={(e) => { if (e.key === "Enter") e.target.blur(); }}
+          className="border border-gray-300 rounded-lg px-2 py-1 w-20 text-sm text-center disabled:opacity-50"
+          placeholder="0.00"
+        />
+      </div>
+      {error && <span className="text-[10px] text-red-600">{error}</span>}
+    </div>
+  );
+}
+
+function OrderRow({ order, onStatusChange, updating, onShippingUpdated }) {
   const [expanded, setExpanded] = useState(false);
   const items = order.items || [];
   const address = order.address;
@@ -67,6 +133,8 @@ function OrderRow({ order, onStatusChange, updating }) {
 
         <p className="font-bold text-gray-900">{formatCurrency(order.total)}</p>
 
+        <ShippingCostInline order={order} onShippingUpdated={onShippingUpdated} />
+
         <span className={`px-2.5 py-1 rounded-full text-xs font-semibold ${STATUS_STYLES[order.order_status] || "bg-gray-100 text-gray-600"}`}>
           {STATUS_LABELS[order.order_status] || order.order_status}
         </span>
@@ -77,7 +145,6 @@ function OrderRow({ order, onStatusChange, updating }) {
           onChange={(e) => onStatusChange(order.id, e.target.value)}
           className="border border-gray-300 rounded-lg px-2 py-1.5 text-sm disabled:opacity-50"
         >
-          {/* الحالة الحالية دايمًا ظاهرة عشان الـ select يبينها، بس مش هتتبعت تاني لو اتخترت */}
           <option value={order.order_status}>{STATUS_LABELS[order.order_status]}</option>
           {allowedNext.map((s) => (
             <option key={s} value={s}>{STATUS_LABELS[s]}</option>
@@ -117,6 +184,7 @@ function OrderRow({ order, onStatusChange, updating }) {
                 <p><span className="font-semibold text-gray-800">الخصم: </span>{formatCurrency(order.discount)}</p>
               )}
               <p><span className="font-semibold text-gray-800">الشحن: </span>{formatCurrency(order.shipping_cost)}</p>
+              <p className="pt-2 border-t border-gray-200"><span className="font-semibold text-gray-800">الإجمالي الكلي: </span>{formatCurrency(order.total)}</p>
             </div>
           </div>
         </div>
@@ -156,6 +224,10 @@ export default function DashboardOrders() {
     } finally {
       setUpdatingId(null);
     }
+  };
+
+  const handleShippingUpdated = (updatedOrder) => {
+    setOrders((prev) => prev.map((o) => (o.id === updatedOrder.id ? updatedOrder : o)));
   };
 
   const filtered = useMemo(() => {
@@ -220,7 +292,13 @@ export default function DashboardOrders() {
       ) : (
         <div className="flex flex-col gap-3">
           {filtered.map((o) => (
-            <OrderRow key={o.id} order={o} onStatusChange={handleStatusChange} updating={updatingId === o.id} />
+            <OrderRow
+              key={o.id}
+              order={o}
+              onStatusChange={handleStatusChange}
+              updating={updatingId === o.id}
+              onShippingUpdated={handleShippingUpdated}
+            />
           ))}
         </div>
       )}
