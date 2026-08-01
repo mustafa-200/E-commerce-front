@@ -3,6 +3,7 @@ import { Routes, Route } from "react-router-dom";
 import Navbar from "./components/layout/Navbar";
 import Footer from "./components/layout/Footer";
 import BottomNav from "./components/layout/BottomNav";
+import ScrollToTop from "./components/ScrollToTop";
 
 import Home from "./pages/Home";
 import LatestProducts from "./pages/LatestProducts";
@@ -37,6 +38,7 @@ import { Import } from "lucide-react";
 function App() {
   return (
     <div dir="rtl" lang="ar" className="bg-background text-on-background antialiased overflow-x-hidden min-h-screen flex flex-col">
+      <ScrollToTop />
       <Navbar />
 
       <main className="flex-1 pb-24 md:pb-0">
