@@ -43,7 +43,7 @@ export default function LatestProducts() {
             return (
               <ProductCard
                 key={product.id}
-                id={product.id}
+                id={product.slug}
                 image={getPrimaryImage(product)}
                 category={product.category?.name}
                 title={product.name}

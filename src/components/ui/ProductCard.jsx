@@ -4,6 +4,7 @@ import ImageWithFallback from "./ImageWithFallback";
 
 export default function ProductCard({
   id,
+  slug,
   image,
   category,
   title,
@@ -19,9 +20,12 @@ export default function ProductCard({
     onAddToCart?.();
   };
 
+  // الرابط لازم يبني بالـ slug مش الـ id، لأن صفحة تفاصيل المنتج بتدور بالـ slug
+  const linkTarget = slug || id;
+
   return (
     <Link
-      to={id ? `/product/${id}` : "#"}
+      to={linkTarget ? `/product/${linkTarget}` : "#"}
       className="block bg-surface-container-lowest rounded-xl overflow-hidden product-card-hover transition-all duration-300 border border-outline-variant relative"
     >
       {discount && (
