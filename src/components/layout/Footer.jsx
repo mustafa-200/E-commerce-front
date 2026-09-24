@@ -77,7 +77,7 @@ export default function Footer() {
                 <div className="flex flex-col gap-2">
                   <a href="tel:+201037419260" className="text-xs text-gray-300 hover:text-amber-400 transition">📞 +201037419260</a>
                   <a href="https://wa.me/201037419260?text=مرحباً" target="_blank" rel="noopener noreferrer" className="text-xs text-gray-300 hover:text-amber-400 transition">💬 واتساب</a>
-                  <a href="mailto:ahmedhany234567op@gmail.com" className="text-xs text-gray-300 hover:text-amber-400 transition">✉️ ahmedhany234567op@gmail.com</a>
+                  <a href="mailto:ahmedhany234567op@gmail.com" className="text-xs text-gray-300 hover:text-amber-400 transition">✉️ fakhirstore741@gmail.com</a>
                 </div>
               </div>
             </div>
