@@ -87,7 +87,7 @@ export default function Footer() {
         <div className="border-t border-white/10"></div>
 
         <div className="mt-12 flex flex-col md:flex-row justify-between items-center gap-6">
-          <p className="text-xs text-gray-300">© {year} Fakher. جميع الحقوق محفوظة.</p>
+          <p className="text-xs text-gray-300">© {year} Fakher Store. جميع الحقوق محفوظة ❤️</p>
 
           <div className="flex items-center gap-6">
             <div className="flex gap-3 items-center">
